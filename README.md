@@ -5,7 +5,7 @@ simple Python 2/3 compatible script for downloading batches of images from dokuw
 ## Do you have Python 2 or 3 installed?
 
 ### Yes 
-* Download [wiki_batch_download.py](../karaceing_img_batch_download/master/scripts/wiki_batch_download.py)
+* Download [karaceing_img_batch_download](https://github.com/engelhardtnick/karaceing_img_batch_download)
 
 ### No
 * Are you on Linux or Windows?
