@@ -19,6 +19,7 @@ try:
     import os.path
     from sys import version_info
     import getpass
+    import errno
 except ImportError as err:
     print("Couldn't import all necessary modules!")
     print(err)
@@ -59,9 +60,13 @@ elmts = len(url_list)
 
 for i, url in enumerate(url_list):
     split = url.split(':')
-    file_name = split[-2] + "_" + split[-1]
-    print(url)
-    print(file_name)
+    file_name = split[-2] + "/" + split[-1]
+    if not os.path.exists(os.path.dirname(file_name)):
+        try:
+            os.makedirs(os.path.dirname(file_name))
+        except OSError as exc: # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
     if os.path.isfile(file_name):
         print("File already exists -> skipping: {}".format(file_name))
         continue
@@ -98,8 +103,9 @@ for i, url in enumerate(url_list):
         f.write(buffer)
         count += 1
         if count % 50 == 0:
-            status = r"Image [{0}/{1}]: {2:^.2f}/{3:^.2f} MB  [{4:^.2f}%]".format(i+1, elmts, file_size_dl/1e6, file_size/1e6, file_size_dl * 100. / file_size)
-            # status = status + chr(8)*(len(status)+1)
+            status = r"Image [{0}/{1}]: {2:^.2f}/{3:^.2f} MB  [{4:^.2f}%]".format(i+1, elmts,
+                                                                                  file_size_dl/1e6, file_size/1e6,
+                                                                                  file_size_dl * 100. / file_size)
             print(status)
             count = 0
     f.close()
