@@ -26,11 +26,13 @@ except ImportError as err:
     exit()
 
 url_list = []
+# get namespace from user
 userinput = raw_input("Please enter wiki-path: \n"
                       "e.g.: infovault:bilder:fsuk_2015\n")
 site_url = "https://wiki.ka-raceing.de/" + userinput
 print("Querying site: {}".format(site_url))
 
+# save password routine
 if False:
     username = "YOUR USERNAME"
     password = "YOUR PASSWORD"
@@ -38,6 +40,7 @@ else:
     username = raw_input("Please enter username: \n")
     password = getpass.getpass("Please enter password: \n")
 
+# get all image links on site
 request = Request(site_url)
 base64string = base64.encodestring(('%s:%s' % (username, password)).encode()).decode().replace('\n', '')
 request.add_header("Authorization", "Basic %s" % base64string)
@@ -58,15 +61,19 @@ if len(url_list) < 1:
 
 elmts = len(url_list)
 
+# hit direct links and download files
 for i, url in enumerate(url_list):
+    # split url for file name
     split = url.split(':')
     file_name = split[-2] + "/" + split[-1]
+    # create new directory for images
     if not os.path.exists(os.path.dirname(file_name)):
         try:
             os.makedirs(os.path.dirname(file_name))
         except OSError as exc: # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
+    # skip image if it already exists
     if os.path.isfile(file_name):
         print("File already exists -> skipping: {}".format(file_name))
         continue
@@ -82,7 +89,7 @@ for i, url in enumerate(url_list):
     except HTTPError as err:
         print(err)
         continue
-
+    # actually write file
     f = open(file_name, 'wb')
     meta = u.info()
     if version_info[0] >= 3:
@@ -95,6 +102,7 @@ for i, url in enumerate(url_list):
     block_sz = 8192
 
     count = 0
+    # show progress bar
     while True:
         buffer = u.read(block_sz)
         if not buffer:
