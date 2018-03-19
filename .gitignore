@@ -1,2 +1,4 @@
 # ignore downloaded .jpg files
 *.jpg
+*.idea
+*.iml
